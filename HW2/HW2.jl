@@ -26,24 +26,24 @@ PriceMatrix = convert( Array{Float64}, Matrix(RawInput[1:NumOfDataRange, 2:NumOf
 
 # calculate history rate of return matrix from 'PriceMatrix'
 # note that the number of rate of return equals the number of data range minus one
-HistoryReturn = zeros(Float64, NumOfDataRange-1, NumOfAssets)	# initialization
+ReturnMatrix = zeros(Float64, NumOfDataRange-1, NumOfAssets)	# initialization
 for i = 1:NumOfAssets
     for j = 1:(NumOfDataRange-1)
-        HistoryReturn[j, i] = ( PriceMatrix[j+1, i] - PriceMatrix[j, i] ) / PriceMatrix[j, i]
+        ReturnMatrix[j, i] = ( PriceMatrix[j+1, i] - PriceMatrix[j, i] ) / PriceMatrix[j, i]
     end
 end
 
 
-# calculate expected return matrix from 'HistoryReturn'
+# calculate expected return matrix from 'ReturnMatrix'
 ExpectedReturn = zeros(Float64, NumOfAssets, 1)	# initialization
-ExpectedReturn = transpose( mean(HistoryReturn, dims = 1) )
+ExpectedReturn = transpose( mean(ReturnMatrix, dims = 1) )
 
 
-# calculate variance covariance matrix from 'HistoryReturn'
+# calculate variance covariance matrix from 'ReturnMatrix'
 VarCovMatrix = zeros(Float64, NumOfAssets, NumOfAssets)	# initialization
 for i = 1:NumOfAssets
 	for j = 1:NumOfAssets
-		VarCovMatrix[i, j] = cov(HistoryReturn[1:end, i], HistoryReturn[1:end, j])
+		VarCovMatrix[i, j] = cov(ReturnMatrix[1:end, i], ReturnMatrix[1:end, j])
 	end
 end
 
@@ -118,11 +118,11 @@ write(Result, "Price Matrix\n")
 writedlm(Result, PriceMatrix, ',')
 write(Result, "\n")
 
-write(Result, "History Return\n")
-writedlm(Result, HistoryReturn, ',')
+write(Result, "Rate of Return Matrix\n")
+writedlm(Result, ReturnMatrix, ',')
 write(Result, "\n")
 
-write(Result, "Expected Return\n")
+write(Result, "Expected Return Vector\n")
 writedlm(Result, ExpectedReturn, ',')
 write(Result, "\n")
 
