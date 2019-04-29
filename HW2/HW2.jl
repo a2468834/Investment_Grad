@@ -25,7 +25,7 @@ NumOfSample = 1 + convert(Int64, round( (FinValue - IniValue) / Increment ))
 
 
 # import raw data
-RawInput = CSV.read("Source.csv")
+RawInput = CSV.read("DJIA_Price201306_201806.csv")
 
 
 # extract price data from 'RawInput'
@@ -148,31 +148,23 @@ writedlm(Result, CAL, ',')
 write(Result, "\n")
 
 write(Result, "Minimum Variance Portfolio\n")
-writedlm(Result, MinVarPortSigma, ',')
-writedlm(Result, MinVarPortMu, ',')
-write(Result, "\n")
+write(Result, string("Mu", ",", MinVarPortSigma, "\n"))
+write(Result, string("Sigma", ",", MinVarPortMu, "\n\n"))
 writedlm(Result, MinVarPortWeightMatrix, ',')
 write(Result, "\n")
 
 write(Result, "Optimal Risky Portfolio\n")
-writedlm(Result, OptRiskySigma, ',')
-writedlm(Result, OptRiskyMu, ',')
-write(Result, "\n")
+write(Result, string("Mu", ",", OptRiskySigma, "\n"))
+write(Result, string("Sigma", ",", OptRiskyMu, "\n\n"))
 writedlm(Result, OptRiskyWeightMatrix, ',')
 write(Result, "\n")
 
 write(Result, "Some Scalars\n")
-write(Result, "Risk Free Rate\n")
-writedlm(Result, RiskFreeRate, ',')
-write(Result, "A\n")
-writedlm(Result, A, ',')
-write(Result, "B\n")
-writedlm(Result, B, ',')
-write(Result, "C\n")
-writedlm(Result, C, ',')
-write(Result, "D\n")
-writedlm(Result, D, ',')
-write(Result, "H\n")
-writedlm(Result, H, ',')
+write(Result, string("Risk Free Rate", ",", RiskFreeRate, "\n"))
+write(Result, string("A", ",", A, "\n"))
+write(Result, string("B", ",", B, "\n"))
+write(Result, string("C", ",", C, "\n"))
+write(Result, string("D", ",", D, "\n"))
+write(Result, string("H", ",", H, "\n"))
 
 close(Result)
