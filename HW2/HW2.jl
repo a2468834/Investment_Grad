@@ -6,7 +6,6 @@
  =  Writer_Name: Chuan-Chun, Wang
 =#
 
-
 using LinearAlgebra
 using DataFrames
 using CSV
@@ -17,7 +16,7 @@ using DelimitedFiles
 # declaration of constant variables
 NumOfAssets = 30
 NumOfDataRange = 61
-RiskFreeRate = 0.5*0.01/12	# i.e., 'monthly' R_f = 0.5%
+RiskFreeRate = 0.5*0.01/12                                                                      # i.e., 'monthly' R_f = 0.5%
 IniValue = -0.1
 FinValue = 0.3
 Increment = 0.005
@@ -29,36 +28,34 @@ RawInput = CSV.read("DJIA_Price201306_201806.csv")
 
 
 # extract price data from 'RawInput'
-PriceMatrix = zeros(Float64, NumOfDataRange, NumOfAssets)	# initialization of 'PriceMatrix'
-PriceMatrix = convert( Array{Float64}, Matrix(RawInput[1:NumOfDataRange, 2:NumOfAssets+1]) )	# the first column is date
+PriceMatrix = convert( Array{Float64}, Matrix(RawInput[1:NumOfDataRange, 2:NumOfAssets+1]) )    # the first column is date
 
 
 # calculate history rate of return matrix from 'PriceMatrix'
 # note that the number of rate of return equals the number of data range minus one
-ReturnMatrix = zeros(Float64, NumOfDataRange-1, NumOfAssets)	# initialization
+ReturnMatrix = zeros(Float64, NumOfDataRange-1, NumOfAssets)                                    # initialization
 for i = 1:NumOfAssets
     for j = 1:(NumOfDataRange-1)
-        ReturnMatrix[j, i] = ( PriceMatrix[j+1, i] - PriceMatrix[j, i] ) / PriceMatrix[j, i]
+        ReturnMatrix[j, i] = ( PriceMatrix[j+1, i] - PriceMatrix[j, i] ) / PriceMatrix[j, i]    # asset i, time j+1 & j
     end
 end
 
 
 # calculate expected return matrix from 'ReturnMatrix'
-ExpectedReturn = zeros(Float64, NumOfAssets, 1)	# initialization
 ExpectedReturn = transpose( mean(ReturnMatrix, dims = 1) )
 
 
 # calculate variance covariance matrix from 'ReturnMatrix'
-VarCovMatrix = zeros(Float64, NumOfAssets, NumOfAssets)	# initialization
-for i = 1:NumOfAssets
-	for j = 1:NumOfAssets
-		VarCovMatrix[i, j] = cov(ReturnMatrix[1:end, i], ReturnMatrix[1:end, j])
-	end
+# note that Julia is column-major, so updating each column is more efficient than each row
+VarCovMatrix = zeros(Float64, NumOfAssets, NumOfAssets)                                         # initialization
+for j = 1:NumOfAssets
+    for i = 1:NumOfAssets
+        VarCovMatrix[i, j] = cov(ReturnMatrix[1:end, i], ReturnMatrix[1:end, j])
+    end
 end
 
 
 # calculate inverse matrix of 'VarCovMatrix'
-InvVarCovMatrix = zeros(Float64, NumOfAssets, NumOfAssets)	# initialization
 InvVarCovMatrix = inv(VarCovMatrix)
 
 
@@ -77,11 +74,11 @@ H = B - (2 * A * RiskFreeRate) + (C * RiskFreeRate * RiskFreeRate)
 EffcntFrntr = zeros(Float64, NumOfSample, 2)
 IndexItr = 1
 for y_coor in IniValue:Increment:FinValue
-	x_coor = sqrt( (C/D) * (y_coor-(A/C)) * (y_coor-(A/C)) + (1/C) )
-	
-	global EffcntFrntr[IndexItr, 1] = x_coor
-	global EffcntFrntr[IndexItr, 2] = y_coor
-	global IndexItr += 1
+    x_coor = sqrt( (C/D) * (y_coor-(A/C)) * (y_coor-(A/C)) + (1/C) )
+    
+    global EffcntFrntr[IndexItr, 1] = x_coor
+    global EffcntFrntr[IndexItr, 2] = y_coor
+    global IndexItr += 1
 end
 
 
@@ -89,34 +86,32 @@ end
 CAL = zeros(Float64, NumOfSample, 2)
 IndexItr = 1
 for y_coor in IniValue:Increment:FinValue
-	if y_coor >= RiskFreeRate
-		x_coor = ( y_coor - RiskFreeRate ) / sqrt(H)
-	else
-		x_coor = ( RiskFreeRate - y_coor ) / sqrt(H)
-	end
-	
-	global CAL[IndexItr, 1] = x_coor
-	global CAL[IndexItr, 2] = y_coor
-	global IndexItr += 1
+    if y_coor >= RiskFreeRate
+        x_coor = ( y_coor - RiskFreeRate ) / sqrt(H)
+    else
+        x_coor = ( RiskFreeRate - y_coor ) / sqrt(H)
+    end
+    
+    global CAL[IndexItr, 1] = x_coor
+    global CAL[IndexItr, 2] = y_coor
+    global IndexItr += 1
 end
 
 
 # step 4: calculate the minimum-variance portfolio
 MinVarPortMu = A / C
 MinVarPortSigma = sqrt(1 / C)
-MinVarPortWeightMatrix = zeros(Float64, NumOfAssets, 1)
 MinVarPortWeightMatrix = (1/C) * InvVarCovMatrix * OneVector
 
 
 # step 5: calculate the intersection point of efficient frontier and CAL (i.e., optimal risky portfolio)
 OptRiskyMu = (B - A*RiskFreeRate) / (A - C*RiskFreeRate)
 OptRiskySigma = sqrt( H / ( (A - C*RiskFreeRate)*(A - C*RiskFreeRate) ) )
-OptRiskyWeightMatrix = zeros(Float64, NumOfAssets, 1)
-OptRiskyWeightMatrix =	begin
-						    ( 1 / ( A - C * RiskFreeRate ) )
-						    *
-						    ( InvVarCovMatrix * ( ExpectedReturn - RiskFreeRate * OneVector ) )
-						end
+OptRiskyWeightMatrix =  begin
+                            ( 1 / ( A - C * RiskFreeRate ) )
+                            *
+                            ( InvVarCovMatrix * ( ExpectedReturn - RiskFreeRate * OneVector ) )
+                        end
 
 
 # print out all of results above
