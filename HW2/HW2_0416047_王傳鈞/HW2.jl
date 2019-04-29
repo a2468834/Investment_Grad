@@ -1,12 +1,3 @@
-#=  
- =  Programming Assignment #2
- =  
- =  Course: Investment (Graduated)
- =  Writer_ID: 0416047
- =  Writer_Name: Chuan-Chun, Wang
-=#
-
-
 using LinearAlgebra
 using DataFrames
 using CSV
