@@ -108,11 +108,12 @@ MinVarPortWeightMatrix = (1/C) * InvVarCovMatrix * OneVector
 # step 5: calculate the intersection point of efficient frontier and CAL (i.e., optimal risky portfolio)
 OptRiskyMu = (B - A*RiskFreeRate) / (A - C*RiskFreeRate)
 OptRiskySigma = sqrt( H / ( (A - C*RiskFreeRate)*(A - C*RiskFreeRate) ) )
-OptRiskyWeightMatrix =  begin
-                            ( 1 / ( A - C * RiskFreeRate ) )
-                            *
-                            ( InvVarCovMatrix * ( ExpectedReturn - RiskFreeRate * OneVector ) )
-                        end
+
+Temp1 = 1 / ( A - C * RiskFreeRate )
+Temp2 = InvVarCovMatrix
+Temp3 = ExpectedReturn - RiskFreeRate * OneVector
+
+OptRiskyWeightMatrix =  Temp1 * Temp2 * Temp3
 
 
 # print out all of results above
