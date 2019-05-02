@@ -1,18 +1,13 @@
-#=  
- =  Programming Assignment #2
- =  
- =  Course: Investment (Graduated)
- =  Writer_ID: 0416047
- =  Writer_Name: Chuan-Chun, Wang
- =  Environment: Julia 1.1.0 on Windows 10(1803) and Intel Core i5-5200U
-=#
+'''
+    Programming Assignment #2
+    
+    Course: Investment (Graduated)
+    Writer_ID: 0416047
+    Writer_Name: Chuan-Chun, Wang
+'''
 
-using LinearAlgebra
-using DataFrames
-using CSV
-using Statistics
-using DelimitedFiles
-
+import numpy
+import csv
 
 # declaration of constant variables
 NumOfAssets = 30
@@ -21,7 +16,7 @@ RiskFreeRate = 0.5*0.01/12                                                      
 IniValue = -0.1
 FinValue = 0.3
 Increment = 0.005
-NumOfSample = 1 + convert(Int64, round( (FinValue - IniValue) / Increment ))
+NumOfSample = 1 + int( ( ( FinValue - IniValue ) / Increment ) )
 
 
 # import raw data
