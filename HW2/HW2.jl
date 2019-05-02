@@ -117,7 +117,7 @@ OptRiskyWeightMatrix =  begin
 
 # print out all of results above
 # open a file in write mode
-Result = open("Result.csv", "w");
+Result = open("Result.csv", "w")
 
 write(Result, "Price Matrix\n")
 writedlm(Result, PriceMatrix, ',')
@@ -144,14 +144,14 @@ writedlm(Result, CAL, ',')
 write(Result, "\n")
 
 write(Result, "Minimum Variance Portfolio\n")
-write(Result, string("Mu", ",", MinVarPortSigma, "\n"))
-write(Result, string("Sigma", ",", MinVarPortMu, "\n\n"))
+write(Result, string("Mu", ",", MinVarPortMu, "\n"))
+write(Result, string("Sigma", ",", MinVarPortSigma, "\n\n"))
 writedlm(Result, MinVarPortWeightMatrix, ',')
 write(Result, "\n")
 
 write(Result, "Optimal Risky Portfolio\n")
-write(Result, string("Mu", ",", OptRiskySigma, "\n"))
-write(Result, string("Sigma", ",", OptRiskyMu, "\n\n"))
+write(Result, string("Mu", ",", OptRiskyMu, "\n"))
+write(Result, string("Sigma", ",", OptRiskySigma, "\n\n"))
 writedlm(Result, OptRiskyWeightMatrix, ',')
 write(Result, "\n")
 
